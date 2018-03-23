@@ -120,7 +120,7 @@ def UpdateFromZip( zipFile ): # Update install by zip file (e.g. file="MyCustomP
 	
 	# Read mod manifest from zip
 	with ZipFile( zipFile ) as zf:
-		with zf.open( "manifest.json" ) as f:
+		with zf.open( "manifest.json", "r" ) as f:
 			modManifest = json.loads( f.read().decode( "utf-8" ) )
 
 	# Check if vanilla server jar is installed
@@ -153,7 +153,7 @@ def UpdateFromZip( zipFile ): # Update install by zip file (e.g. file="MyCustomP
 
 	hkOld = {}
 	if os.path.isfile( HOUSEKEEPING_FILE ):
-		with open( HOUSEKEEPING_FILE, "r" ) as f: # Load old housekeeping file
+		with open( HOUSEKEEPING_FILE, "rb" ) as f: # Load old housekeeping file
 			hkOld = json.loads( f.read().decode( "utf-8" ) )
 		
 		os.remove( HOUSEKEEPING_FILE )
