@@ -44,6 +44,9 @@ OVERRIDES_FOLDER = "./"
 MODS_FOLDER = "./mods/"
 
 FORGE_SERVER_JAR = ""
+FORGE_DOUBLE_VERSIONS = [ "1.7.10", "1.8.9" ]
+FORGE_URL_TEMPLATE_DOUBLE = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/{0}-{1}-{0}/forge-{0}-{1}-{0}-installer.jar"
+FORGE_SERVER_TEMPLATE_DOUBLE = "forge-{0}-{1}-{0}-universal.jar"
 # ---
 
 # [Helper functions]
@@ -79,7 +82,10 @@ def DownloadVanilla( version ): # Download vanilla server jar by version (e.g. v
 def DownloadForge( mcVersion, forgeVersion ):
 	filename = FORGE_INSTALLER_TEMPLATE.format( mcVersion, forgeVersion )
 	with open( filename, "wb" ) as f:
-		f.write( Request( FORGE_URL_TEMPLATE.format( mcVersion, forgeVersion ) ).content )
+		if mcVersion in FORGE_DOUBLE_VERSIONS:
+			f.write( Request( FORGE_URL_TEMPLATE_DOUBLE.format( mcVersion, forgeVersion ) ).content )
+		else:
+			f.write( Request( FORGE_URL_TEMPLATE.format( mcVersion, forgeVersion ) ).content )
 
 	print( "> Installing Forge", end = " " )
 	sys.stdout.flush()
@@ -126,7 +132,10 @@ def UpdateFromZip( zipFile ): # Update install by zip file (e.g. file="MyCustomP
 	forgeVersion = modManifest[ "minecraft" ][ "modLoaders" ][ 0 ][ "id" ].split( "-" )[ 1 ]
 
 	global FORGE_SERVER_JAR
-	FORGE_SERVER_JAR = FORGE_SERVER_TEMPLATE.format( mcVersion, forgeVersion )
+	if mcVersion in FORGE_DOUBLE_VERSIONS:
+		FORGE_SERVER_JAR = FORGE_SERVER_TEMPLATE_DOUBLE.format( mcVersion, forgeVersion )
+	else:
+		FORGE_SERVER_JAR = FORGE_SERVER_TEMPLATE.format( mcVersion, forgeVersion )
 
 	if not os.path.isfile( FORGE_SERVER_JAR ):
 		DownloadForge( mcVersion, forgeVersion )
